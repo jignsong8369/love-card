@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#bde78c" />
+  <title>你愿意跟我出去吗？</title>
+  <meta name="description" content="有一个小问题想问你..." />
+  <meta itemprop="name" content="你愿意跟我出去吗？" />
+  <meta itemprop="description" content="有一个小问题想问你..." />
+  <style>
+    :root {
+      --pink: #ff9ec8;
+      --pink-dark: #ff5fa2;
+      --pink-deep: #e91e8c;
+      --white: #fff0f6;
+      --shadow: rgba(233, 30, 140, 0.25);
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body {
+      margin: 0; padding: 0; height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: linear-gradient(180deg, #ffd6e8 0%, #ff9ec8 100%);
+      overflow: hidden; color: #b0004d;
+      touch-action: manipulation;
+    }
+    #hearts {
+      position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0;
+    }
+    .heart {
+      position: absolute; color: rgba(255, 255, 255, 0.45);
+      font-size: 18px; animation: floatUp 7s linear infinite;
+    }
+    @keyframes floatUp {
+      0% { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+      15% { opacity: 1; }
+      85% { opacity: 1; }
+      100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+    }
+    .app {
+      position: relative; z-index: 1; height: 100%; display: flex; align-items: center; justify-content: center; padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom);
+    }
+    .card {
+      width: 92vw; max-width: 420px; background: rgba(255, 255, 255, 0.82);
+      border: 4px solid #ff5fa2;
+      border-radius: 24px;
+      box-shadow: 0 18px 40px var(--shadow);
+      padding: 28px 22px;
+      text-align: center;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      min-height: 520px;
+      max-height: 90vh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .pixel-box {
+      border: 3px solid #ff5fa2;
+      background: #fff0f6;
+      border-radius: 12px;
+      padding: 14px;
+      margin: 0 auto 18px;
+      width: 140px; height: 140px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 6px 6px 0 rgba(255, 95, 162, 0.25);
+    }
+    .pixel-box svg { width: 100%; height: 100%; }
+    h1 { margin: 0 0 8px; font-size: 24px; letter-spacing: 1px; }
+    .subtitle { margin: 0 0 24px; font-size: 14px; color: #d63384; min-height: 22px; }
+    .btns { position: relative; min-height: 140px; display: flex; flex-direction: column; gap: 16px; align-items: center; justify-content: center; }
+    button {
+      border: none; outline: none; cursor: pointer;
+      font-family: inherit; font-weight: 700;
+      transition: transform .12s ease, box-shadow .12s ease, opacity .12s ease;
+    }
+    button:active { transform: scale(0.96); }
+    .btn-yes {
+      background: linear-gradient(180deg, #ff5fa2, #e91e8c);
+      color: #fff;
+      border-radius: 14px;
+      padding: 14px 42px;
+      font-size: 22px;
+      letter-spacing: 2px;
+      box-shadow: 0 8px 0 #b7156c, 0 14px 20px rgba(183, 21, 108, 0.25);
+      text-shadow: 0 2px 0 rgba(0,0,0,.15);
+    }
+    .btn-no {
+      background: #fff;
+      color: #ff5fa2;
+      border: 3px solid #ff5fa2;
+      border-radius: 12px;
+      padding: 8px 26px;
+      font-size: 16px;
+      box-shadow: 0 4px 0 #ff5fa2;
+      position: absolute;
+      right: 12%;
+      top: 55%;
+      touch-action: none;
+      user-select: none;
+    }
+    .options {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 8px 0 22px;
+    }
+    .option {
+      background: #fff; border: 3px solid #ff9ec8; border-radius: 14px;
+      padding: 12px 6px; cursor: pointer; font-size: 14px; font-weight: 600;
+      color: #b0004d; transition: all .12s ease;
+      box-shadow: 0 4px 0 rgba(255, 95, 162, 0.18);
+    }
+    .option .icon { font-size: 26px; display: block; margin-bottom: 4px; }
+    .option.selected {
+      background: #ff5fa2; color: #fff; border-color: #e91e8c;
+      transform: translateY(2px); box-shadow: 0 2px 0 #b7156c;
+    }
+    .date-input {
+      appearance: none; -webkit-appearance: none;
+      width: 100%; max-width: 260px; padding: 12px 16px;
+      border: 3px solid #ff5fa2; border-radius: 12px;
+      background: #fff; color: #b0004d; font-size: 16px; font-weight: 600;
+      margin: 0 auto 20px; text-align: center;
+    }
+    .letter {
+      background: #fff; border: 3px solid #ff5fa2; border-radius: 8px;
+      box-shadow: 8px 8px 0 rgba(183, 21, 108, 0.15);
+      text-align: left; padding: 16px; margin-bottom: 18px;
+    }
+    .letter-title {
+      background: #ff5fa2; color: #fff; margin: -16px -16px 12px; padding: 8px 12px;
+      border-radius: 6px 6px 0 0; font-size: 13px; display: flex; justify-content: space-between; align-items: center;
+    }
+    .letter-body { font-size: 15px; line-height: 1.8; color: #880e4f; white-space: pre-wrap; }
+    .letter-sign { margin-top: 12px; text-align: right; }
+    .letter-sign input {
+      border: none; border-bottom: 2px dashed #ff5fa2; background: transparent;
+      color: #b0004d; font-size: 15px; text-align: right; width: 90px; outline: none;
+      font-family: inherit; font-weight: 600;
+    }
+    .success { font-size: 16px; color: #d63384; line-height: 1.8; }
+    .success strong { color: #b0004d; font-size: 18px; }
+    .hidden { display: none !important; }
+    .fade { animation: fadeIn .35s ease both; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    .shaker { animation: shake .35s ease both; }
+    @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+    .confetti { position: fixed; pointer-events: none; z-index: 99; font-size: 22px; animation: confettiFall 1.2s ease-out forwards; }
+    @keyframes confettiFall { 0%{opacity:1;transform:translateY(0) rotate(0)} 100%{opacity:0;transform:translateY(120px) rotate(720deg)} }
+    .muted { font-size: 12px; color: #d63384; margin-top: 14px; opacity: .8; }
+  
+/* Spring pixel garden — presentation only. */
+:root { --pink:#b9df88; --pink-dark:#719e48; --pink-deep:#466c34; --white:#fffef0; --shadow:#416b3020; }
+html,body { background:#e5f3c7; color:#365430; font-family:"Microsoft YaHei","PingFang SC",sans-serif; }
+body { background-image:radial-gradient(#86ab4826 1px,transparent 1px); background-size:8px 8px; }
+.garden { position:fixed; inset:0; pointer-events:none; } .garden>svg { width:100%;height:100%; }
+.site-label { position:fixed;top:32px;left:38px;font:11px ui-monospace,Consolas,monospace;letter-spacing:2px;color:#658547; }
+.app { padding:65px 22px 90px; min-height:100%; }
+.card { position:relative;width:420px;max-width:100%;min-height:510px;max-height:calc(100dvh - 145px);padding:54px 34px 30px;background:#fffef0;border:2px solid #52783c;border-radius:0;box-shadow:6px 6px 0 #779c4e,10px 10px 0 #eaf3c8;backdrop-filter:none; -webkit-backdrop-filter:none;justify-content:flex-start;overflow-x:hidden; }
+.window-bar { position:absolute;top:0;left:0;right:0;height:29px;display:flex;align-items:center;justify-content:space-between;background:#d8eab1;border-bottom:2px solid #52783c;padding:0 12px;font:11px ui-monospace,Consolas,monospace;letter-spacing:.5px;color:#52743d; }
+.chapter {font:10px ui-monospace,Consolas,monospace;letter-spacing:2px;color:#879b67;margin:0 0 22px;}
+.pixel-box {flex-shrink:0;width:102px;height:84px;padding:8px;background:transparent;border:0;border-radius:0;box-shadow:none;margin:0 auto 13px;}
+.pixel-box svg {overflow:visible;image-rendering:pixelated;}
+.invitation-tag {font-size:11px;letter-spacing:3px;color:#789051;margin-bottom:10px;}
+h1 {font-size:29px;line-height:1.48;letter-spacing:2px;margin:0 0 12px;font-weight:900;color:#34562f;}
+.subtitle {font-size:12px;color:#83916b;margin-bottom:20px;line-height:1.8;}
+.btns {min-height:117px;justify-content:flex-start;padding-top:3px;flex-shrink:0;}
+button {border-radius:0!important;} button:focus-visible,.option:focus-visible,input:focus-visible {outline:3px solid #bfa64e;outline-offset:4px;}
+.btn-yes {background:#a7d970;color:#35552b;border:2px solid #557b3c;box-shadow:0 5px 0 #557b3c;padding:12px 20px;font-size:16px;letter-spacing:1px;text-shadow:none;}
+.btn-yes:hover {background:#b9e785;} .btn-yes:disabled {cursor:default;} #yesBtn {min-width:178px;font:700 20px ui-monospace,Consolas,monospace;letter-spacing:4px;} #yesBtn::after {content:' ♡';}
+.btn-no {background:#fffef0;color:#8a9675;border:1px solid #acb995;box-shadow:0 3px 0 #c6d0ae;padding:6px 18px;font:12px ui-monospace,Consolas,monospace;right:calc(50% - 31px);top:72px;width:62px;}
+.options {gap:10px;margin:0 0 22px;} .option {background:#f8fae9;border:2px solid #c9d9ac;border-radius:0;box-shadow:0 3px 0 #e2e9ce;color:#587243;font-size:12px;padding:10px 5px;}
+.option:hover {border-color:#84a759;background:#eef6d9;} .option .icon {font-size:23px;}
+.option.selected {background:#d4ecb2;color:#34562f;border-color:#648a44;box-shadow:0 2px 0 #648a44;}
+.date-input {border:2px solid #91ae6a;border-radius:0;background:#f5f8e5;color:#476639;font-family:inherit;margin-top:15px;margin-bottom:30px;min-height:48px;}
+.letter {border:2px solid #87a365;border-radius:0;box-shadow:4px 4px 0 #e2eacb;background:#fffff8;margin:10px 0 27px;padding:16px;}
+.letter-title {background:#dcebbb;border-radius:0;color:#55703e;font:12px ui-monospace,Consolas,monospace;padding:10px 12px;}
+.letter-body {font-size:14px;color:#5e7050;line-height:2.1;}.letter-sign {font-size:13px;color:#789051;}.letter-sign input {color:#476639;border-color:#a1b780;}
+.success {color:#738759;font-size:15px;line-height:2;}.success strong {color:#416334;font-size:17px;}.muted {color:#88986f;font-size:11px;}
+#step2 .chapter {margin-bottom:12px;} #step2 .pixel-box {width:78px;height:62px;margin-bottom:8px;} #step2 h1,#step3 h1 {font-size:24px;} #step4 {justify-content:center;} #step4 .chapter {margin-top:5px;} #step5 {justify-content:center;}
+.heart {font-size:0!important;opacity:.25;color:transparent;width:12px;height:12px;background:#fffbd6;clip-path:polygon(0 15%,15% 15%,15% 0,40% 0,50% 15%,60% 0,85% 0,85% 15%,100% 15%,100% 50%,50% 100%,0 50%);}
+.garden-caption {position:fixed;bottom:25px;left:0;right:0;text-align:center;color:#4c7637;font:10px ui-monospace,Consolas,monospace;letter-spacing:3px;pointer-events:none;}.garden-caption span {display:block;margin-top:9px;font:11px "Microsoft YaHei",sans-serif;letter-spacing:2px;}
+@media (max-width:600px) { .girl-sprite {transform:translate(425px,570px) scale(7);} .boy-sprite {transform:translate(655px,570px) scale(7);} .girl-heart {transform:translate(471px,538px) scale(3);} .boy-heart {transform:translate(701px,538px) scale(3);} .site-label {top:22px;left:0;right:0;text-align:center;font-size:9px;} .app {align-items:center;padding:52px 24px 165px;} .card {width:360px;min-height:460px;max-height:calc(100dvh - 217px);padding:47px 25px 23px;} .chapter {font-size:9px;margin-bottom:16px;} h1 {font-size:27px;} .pixel-box {height:70px;width:86px;margin-bottom:10px;} .subtitle {font-size:11px;} .garden>svg {width:780px;max-width:none;position:absolute;left:50%;transform:translateX(-50%);height:520px;bottom:0;} .garden-caption {bottom:15px;font-size:8px;letter-spacing:2px;}.garden-caption span {font-size:9px;margin-top:6px;} .options {gap:8px;} .option {padding:8px 4px;} #step2 .pixel-box {height:44px;} #step2 .chapter {margin-bottom:8px;} #step2 .subtitle {margin-bottom:12px;} #step2 h1 {font-size:23px;} }
+@media (max-height:720px) { .app {padding-top:45px;padding-bottom:132px;} .card {min-height:0;max-height:calc(100dvh - 177px);} .chapter {margin-bottom:10px;} #step1 .pixel-box {height:50px;} #step1 h1 {font-size:25px;} .subtitle {margin-bottom:12px;} }
+@media (prefers-reduced-motion:reduce) { .heart,.confetti {display:none;} .fade,.shaker {animation:none;} button,.option {transition:none;} }
+
+  </style>
+</head>
+<body>
+  <div class="garden" aria-hidden="true"><svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMax slice" shape-rendering="crispEdges">
+<defs><pattern id="grass" width="68" height="52" patternUnits="userSpaceOnUse"><path d="M10 24h3v4h3v-7h3v10h-9Z" fill="#75ad48" opacity=".4"/></pattern><g id="flower"><path d="M3 4v5H2V7H0V6h3" fill="#67944a"/><path d="M2 0h2v2h2v2H4v2H2V4H0V2h2" fill="#fffdea"/><path d="M2 2h2v2H2Z" fill="#f0c759"/></g><g id="pixel-heart"><path d="M1 0h2v1h1V0h2v1h1v3H6v1H5v1H4v1H3V6H2V5H1V4H0V1h1Z" fill="#ef9281"/></g><g id="girl"><rect x="4" y="0" width="1" height="1" fill="#554331"/><rect x="5" y="0" width="1" height="1" fill="#554331"/><rect x="6" y="0" width="1" height="1" fill="#554331"/><rect x="7" y="0" width="1" height="1" fill="#554331"/><rect x="8" y="0" width="1" height="1" fill="#554331"/><rect x="9" y="0" width="1" height="1" fill="#554331"/><rect x="3" y="1" width="1" height="1" fill="#554331"/><rect x="4" y="1" width="1" height="1" fill="#554331"/><rect x="5" y="1" width="1" height="1" fill="#554331"/><rect x="6" y="1" width="1" height="1" fill="#554331"/><rect x="7" y="1" width="1" height="1" fill="#554331"/><rect x="8" y="1" width="1" height="1" fill="#554331"/><rect x="9" y="1" width="1" height="1" fill="#554331"/><rect x="10" y="1" width="1" height="1" fill="#554331"/><rect x="2" y="2" width="1" height="1" fill="#554331"/><rect x="3" y="2" width="1" height="1" fill="#554331"/><rect x="4" y="2" width="1" height="1" fill="#554331"/><rect x="5" y="2" width="1" height="1" fill="#ffdab0"/><rect x="6" y="2" width="1" height="1" fill="#ffdab0"/><rect x="7" y="2" width="1" height="1" fill="#ffdab0"/><rect x="8" y="2" width="1" height="1" fill="#ffdab0"/><rect x="9" y="2" width="1" height="1" fill="#554331"/><rect x="10" y="2" width="1" height="1" fill="#554331"/><rect x="11" y="2" width="1" height="1" fill="#ee9285"/><rect x="2" y="3" width="1" height="1" fill="#554331"/><rect x="3" y="3" width="1" height="1" fill="#554331"/><rect x="4" y="3" width="1" height="1" fill="#ffdab0"/><rect x="5" y="3" width="1" height="1" fill="#ffdab0"/><rect x="6" y="3" width="1" height="1" fill="#ffdab0"/><rect x="7" y="3" width="1" height="1" fill="#ffdab0"/><rect x="8" y="3" width="1" height="1" fill="#ffdab0"/><rect x="9" y="3" width="1" height="1" fill="#ffdab0"/><rect x="10" y="3" width="1" height="1" fill="#ee9285"/><rect x="11" y="3" width="1" height="1" fill="#ee9285"/><rect x="12" y="3" width="1" height="1" fill="#ee9285"/><rect x="2" y="4" width="1" height="1" fill="#554331"/><rect x="3" y="4" width="1" height="1" fill="#554331"/><rect x="4" y="4" width="1" height="1" fill="#ffdab0"/><rect x="5" y="4" width="1" height="1" fill="#423e2c"/><rect x="7" y="4" width="1" height="1" fill="#ffdab0"/><rect x="8" y="4" width="1" height="1" fill="#423e2c"/><rect x="9" y="4" width="1" height="1" fill="#ffdab0"/><rect x="10" y="4" width="1" height="1" fill="#554331"/><rect x="11" y="4" width="1" height="1" fill="#554331"/><rect x="2" y="5" width="1" height="1" fill="#554331"/><rect x="3" y="5" width="1" height="1" fill="#554331"/><rect x="4" y="5" width="1" height="1" fill="#f39487"/><rect x="5" y="5" width="1" height="1" fill="#ffdab0"/><rect x="6" y="5" width="1" height="1" fill="#ffdab0"/><rect x="7" y="5" width="1" height="1" fill="#ffdab0"/><rect x="8" y="5" width="1" height="1" fill="#f39487"/><rect x="9" y="5" width="1" height="1" fill="#ffdab0"/><rect x="10" y="5" width="1" height="1" fill="#554331"/><rect x="11" y="5" width="1" height="1" fill="#554331"/><rect x="2" y="6" width="1" height="1" fill="#554331"/><rect x="3" y="6" width="1" height="1" fill="#554331"/><rect x="4" y="6" width="1" height="1" fill="#554331"/><rect x="5" y="6" width="1" height="1" fill="#ffdab0"/><rect x="6" y="6" width="1" height="1" fill="#ffdab0"/><rect x="7" y="6" width="1" height="1" fill="#ffdab0"/><rect x="8" y="6" width="1" height="1" fill="#ffdab0"/><rect x="9" y="6" width="1" height="1" fill="#554331"/><rect x="10" y="6" width="1" height="1" fill="#554331"/><rect x="11" y="6" width="1" height="1" fill="#554331"/><rect x="2" y="7" width="1" height="1" fill="#554331"/><rect x="3" y="7" width="1" height="1" fill="#554331"/><rect x="4" y="7" width="1" height="1" fill="#fffde6"/><rect x="5" y="7" width="1" height="1" fill="#fffde6"/><rect x="6" y="7" width="1" height="1" fill="#fffde6"/><rect x="7" y="7" width="1" height="1" fill="#fffde6"/><rect x="8" y="7" width="1" height="1" fill="#fffde6"/><rect x="9" y="7" width="1" height="1" fill="#fffde6"/><rect x="10" y="7" width="1" height="1" fill="#554331"/><rect x="11" y="7" width="1" height="1" fill="#554331"/><rect x="3" y="8" width="1" height="1" fill="#638c42"/><rect x="4" y="8" width="1" height="1" fill="#fffde6"/><rect x="5" y="8" width="1" height="1" fill="#fffde6"/><rect x="6" y="8" width="1" height="1" fill="#fffde6"/><rect x="7" y="8" width="1" height="1" fill="#fffde6"/><rect x="8" y="8" width="1" height="1" fill="#fffde6"/><rect x="9" y="8" width="1" height="1" fill="#fffde6"/><rect x="10" y="8" width="1" height="1" fill="#638c42"/><rect x="2" y="9" width="1" height="1" fill="#ffdab0"/><rect x="3" y="9" width="1" height="1" fill="#ffdab0"/><rect x="4" y="9" width="1" height="1" fill="#fffde6"/><rect x="5" y="9" width="1" height="1" fill="#fffde6"/><rect x="6" y="9" width="1" height="1" fill="#fffde6"/><rect x="7" y="9" width="1" height="1" fill="#fffde6"/><rect x="8" y="9" width="1" height="1" fill="#fffde6"/><rect x="9" y="9" width="1" height="1" fill="#fffde6"/><rect x="10" y="9" width="1" height="1" fill="#ffdab0"/><rect x="11" y="9" width="1" height="1" fill="#ffdab0"/><rect x="2" y="10" width="1" height="1" fill="#ffdab0"/><rect x="3" y="10" width="1" height="1" fill="#ffdab0"/><rect x="4" y="10" width="1" height="1" fill="#fffde6"/><rect x="5" y="10" width="1" height="1" fill="#fffde6"/><rect x="6" y="10" width="1" height="1" fill="#fffde6"/><rect x="7" y="10" width="1" height="1" fill="#fffde6"/><rect x="8" y="10" width="1" height="1" fill="#fffde6"/><rect x="9" y="10" width="1" height="1" fill="#fffde6"/><rect x="10" y="10" width="1" height="1" fill="#ffdab0"/><rect x="11" y="10" width="1" height="1" fill="#ffdab0"/><rect x="4" y="11" width="1" height="1" fill="#fffde6"/><rect x="5" y="11" width="1" height="1" fill="#fffde6"/><rect x="6" y="11" width="1" height="1" fill="#fffde6"/><rect x="7" y="11" width="1" height="1" fill="#fffde6"/><rect x="8" y="11" width="1" height="1" fill="#fffde6"/><rect x="9" y="11" width="1" height="1" fill="#fffde6"/><rect x="3" y="12" width="1" height="1" fill="#fffde6"/><rect x="4" y="12" width="1" height="1" fill="#fffde6"/><rect x="5" y="12" width="1" height="1" fill="#fffde6"/><rect x="6" y="12" width="1" height="1" fill="#fffde6"/><rect x="7" y="12" width="1" height="1" fill="#fffde6"/><rect x="8" y="12" width="1" height="1" fill="#fffde6"/><rect x="9" y="12" width="1" height="1" fill="#fffde6"/><rect x="10" y="12" width="1" height="1" fill="#fffde6"/><rect x="3" y="13" width="1" height="1" fill="#fffde6"/><rect x="4" y="13" width="1" height="1" fill="#fffde6"/><rect x="5" y="13" width="1" height="1" fill="#fffde6"/><rect x="6" y="13" width="1" height="1" fill="#fffde6"/><rect x="7" y="13" width="1" height="1" fill="#fffde6"/><rect x="8" y="13" width="1" height="1" fill="#fffde6"/><rect x="9" y="13" width="1" height="1" fill="#fffde6"/><rect x="10" y="13" width="1" height="1" fill="#fffde6"/><rect x="5" y="14" width="1" height="1" fill="#ffdab0"/><rect x="8" y="14" width="1" height="1" fill="#ffdab0"/><rect x="5" y="15" width="1" height="1" fill="#ffdab0"/><rect x="8" y="15" width="1" height="1" fill="#ffdab0"/><rect x="4" y="16" width="1" height="1" fill="#638c42"/><rect x="5" y="16" width="1" height="1" fill="#638c42"/><rect x="8" y="16" width="1" height="1" fill="#638c42"/><rect x="9" y="16" width="1" height="1" fill="#638c42"/></g><g id="boy"><rect x="4" y="0" width="1" height="1" fill="#554331"/><rect x="5" y="0" width="1" height="1" fill="#554331"/><rect x="6" y="0" width="1" height="1" fill="#554331"/><rect x="7" y="0" width="1" height="1" fill="#554331"/><rect x="8" y="0" width="1" height="1" fill="#554331"/><rect x="9" y="0" width="1" height="1" fill="#554331"/><rect x="3" y="1" width="1" height="1" fill="#554331"/><rect x="4" y="1" width="1" height="1" fill="#554331"/><rect x="5" y="1" width="1" height="1" fill="#554331"/><rect x="6" y="1" width="1" height="1" fill="#554331"/><rect x="7" y="1" width="1" height="1" fill="#554331"/><rect x="8" y="1" width="1" height="1" fill="#554331"/><rect x="9" y="1" width="1" height="1" fill="#554331"/><rect x="10" y="1" width="1" height="1" fill="#554331"/><rect x="3" y="2" width="1" height="1" fill="#554331"/><rect x="4" y="2" width="1" height="1" fill="#554331"/><rect x="5" y="2" width="1" height="1" fill="#554331"/><rect x="6" y="2" width="1" height="1" fill="#554331"/><rect x="7" y="2" width="1" height="1" fill="#554331"/><rect x="8" y="2" width="1" height="1" fill="#554331"/><rect x="9" y="2" width="1" height="1" fill="#554331"/><rect x="10" y="2" width="1" height="1" fill="#554331"/><rect x="3" y="3" width="1" height="1" fill="#554331"/><rect x="4" y="3" width="1" height="1" fill="#ffdab0"/><rect x="5" y="3" width="1" height="1" fill="#ffdab0"/><rect x="6" y="3" width="1" height="1" fill="#ffdab0"/><rect x="7" y="3" width="1" height="1" fill="#ffdab0"/><rect x="8" y="3" width="1" height="1" fill="#ffdab0"/><rect x="9" y="3" width="1" height="1" fill="#ffdab0"/><rect x="10" y="3" width="1" height="1" fill="#554331"/><rect x="3" y="4" width="1" height="1" fill="#ffdab0"/><rect x="4" y="4" width="1" height="1" fill="#ffdab0"/><rect x="5" y="4" width="1" height="1" fill="#423e2c"/><rect x="7" y="4" width="1" height="1" fill="#ffdab0"/><rect x="8" y="4" width="1" height="1" fill="#ffdab0"/><rect x="9" y="4" width="1" height="1" fill="#423e2c"/><rect x="10" y="4" width="1" height="1" fill="#ffdab0"/><rect x="3" y="5" width="1" height="1" fill="#ffdab0"/><rect x="4" y="5" width="1" height="1" fill="#f39487"/><rect x="5" y="5" width="1" height="1" fill="#ffdab0"/><rect x="6" y="5" width="1" height="1" fill="#ffdab0"/><rect x="7" y="5" width="1" height="1" fill="#ffdab0"/><rect x="8" y="5" width="1" height="1" fill="#f39487"/><rect x="9" y="5" width="1" height="1" fill="#ffdab0"/><rect x="10" y="5" width="1" height="1" fill="#ffdab0"/><rect x="4" y="6" width="1" height="1" fill="#ffdab0"/><rect x="5" y="6" width="1" height="1" fill="#ffdab0"/><rect x="6" y="6" width="1" height="1" fill="#ffdab0"/><rect x="7" y="6" width="1" height="1" fill="#ffdab0"/><rect x="8" y="6" width="1" height="1" fill="#ffdab0"/><rect x="9" y="6" width="1" height="1" fill="#ffdab0"/><rect x="3" y="7" width="1" height="1" fill="#638c42"/><rect x="4" y="7" width="1" height="1" fill="#638c42"/><rect x="5" y="7" width="1" height="1" fill="#fffde6"/><rect x="6" y="7" width="1" height="1" fill="#fffde6"/><rect x="7" y="7" width="1" height="1" fill="#638c42"/><rect x="8" y="7" width="1" height="1" fill="#638c42"/><rect x="9" y="7" width="1" height="1" fill="#638c42"/><rect x="10" y="7" width="1" height="1" fill="#638c42"/><rect x="2" y="8" width="1" height="1" fill="#638c42"/><rect x="3" y="8" width="1" height="1" fill="#638c42"/><rect x="4" y="8" width="1" height="1" fill="#638c42"/><rect x="5" y="8" width="1" height="1" fill="#638c42"/><rect x="6" y="8" width="1" height="1" fill="#638c42"/><rect x="7" y="8" width="1" height="1" fill="#638c42"/><rect x="8" y="8" width="1" height="1" fill="#638c42"/><rect x="9" y="8" width="1" height="1" fill="#638c42"/><rect x="10" y="8" width="1" height="1" fill="#638c42"/><rect x="11" y="8" width="1" height="1" fill="#638c42"/><rect x="2" y="9" width="1" height="1" fill="#ffdab0"/><rect x="3" y="9" width="1" height="1" fill="#ffdab0"/><rect x="4" y="9" width="1" height="1" fill="#638c42"/><rect x="5" y="9" width="1" height="1" fill="#638c42"/><rect x="6" y="9" width="1" height="1" fill="#638c42"/><rect x="7" y="9" width="1" height="1" fill="#638c42"/><rect x="8" y="9" width="1" height="1" fill="#638c42"/><rect x="9" y="9" width="1" height="1" fill="#638c42"/><rect x="10" y="9" width="1" height="1" fill="#ffdab0"/><rect x="11" y="9" width="1" height="1" fill="#ffdab0"/><rect x="2" y="10" width="1" height="1" fill="#ffdab0"/><rect x="3" y="10" width="1" height="1" fill="#ffdab0"/><rect x="4" y="10" width="1" height="1" fill="#638c42"/><rect x="5" y="10" width="1" height="1" fill="#638c42"/><rect x="6" y="10" width="1" height="1" fill="#638c42"/><rect x="7" y="10" width="1" height="1" fill="#638c42"/><rect x="8" y="10" width="1" height="1" fill="#638c42"/><rect x="9" y="10" width="1" height="1" fill="#638c42"/><rect x="10" y="10" width="1" height="1" fill="#ffdab0"/><rect x="11" y="10" width="1" height="1" fill="#ffdab0"/><rect x="4" y="11" width="1" height="1" fill="#728b64"/><rect x="5" y="11" width="1" height="1" fill="#728b64"/><rect x="6" y="11" width="1" height="1" fill="#728b64"/><rect x="7" y="11" width="1" height="1" fill="#728b64"/><rect x="8" y="11" width="1" height="1" fill="#728b64"/><rect x="9" y="11" width="1" height="1" fill="#728b64"/><rect x="4" y="12" width="1" height="1" fill="#728b64"/><rect x="5" y="12" width="1" height="1" fill="#728b64"/><rect x="8" y="12" width="1" height="1" fill="#728b64"/><rect x="9" y="12" width="1" height="1" fill="#728b64"/><rect x="4" y="13" width="1" height="1" fill="#728b64"/><rect x="5" y="13" width="1" height="1" fill="#728b64"/><rect x="8" y="13" width="1" height="1" fill="#728b64"/><rect x="9" y="13" width="1" height="1" fill="#728b64"/><rect x="4" y="14" width="1" height="1" fill="#ffdab0"/><rect x="5" y="14" width="1" height="1" fill="#ffdab0"/><rect x="8" y="14" width="1" height="1" fill="#ffdab0"/><rect x="9" y="14" width="1" height="1" fill="#ffdab0"/><rect x="3" y="15" width="1" height="1" fill="#554331"/><rect x="4" y="15" width="1" height="1" fill="#554331"/><rect x="5" y="15" width="1" height="1" fill="#554331"/><rect x="8" y="15" width="1" height="1" fill="#554331"/><rect x="9" y="15" width="1" height="1" fill="#554331"/><rect x="10" y="15" width="1" height="1" fill="#554331"/></g></defs>
+<path d="M0 360h100v-30h120v35h140v-25h150v35h170v-30h180v-25h160v35h180v445H0Z" fill="#c7e99b"/>
+<path d="M0 480h120v-28h180v35h220v-25h200v25h210v-35h160v30h110v318H0Z" fill="#b0da7b"/>
+<path d="M0 625h190v-20h230v24h340v-20h220v16h220v175H0Z" fill="#99cb65"/><path d="M0 625h1200v175H0Z" fill="url(#grass)"/>
+<g fill="#ffffe9"><path d="M110 170h22v-14h45v14h28v16h-95Z"/><path d="M922 214h24v-17h40v-14h31v14h23v17h21v15H922Z"/><path d="M310 83h16V69h32v14h20v14h-68Z"/></g>
+<g fill="#f4e7a0"><path d="M1028 70h48v12h12v48h-12v12h-48v-12h-12V82h12Z"/></g>
+<g class="girl-sprite" transform="translate(205 570) scale(7)"><use href="#girl"/></g><g class="boy-sprite" transform="translate(890 570) scale(7)"><use href="#boy"/></g>
+<g class="girl-heart" transform="translate(251 538) scale(3)"><use href="#pixel-heart"/></g><g class="boy-heart" transform="translate(936 538) scale(3)"><use href="#pixel-heart"/></g>
+<g><use href="#flower" transform="translate(105 710) scale(4)"/><use href="#flower" transform="translate(345 735) scale(3)"/><use href="#flower" transform="translate(823 715) scale(4)"/><use href="#flower" transform="translate(1080 665) scale(3)"/><use href="#flower" transform="translate(65 595) scale(3)"/><use href="#flower" transform="translate(1105 755) scale(4)"/></g>
+</svg></div>
+  <div id="hearts" aria-hidden="true"></div>
+  <div class="site-label" aria-hidden="true">♡ &nbsp; OUR LITTLE ADVENTURE</div>
+  <main class="app">
+    <section id="step1" class="card fade"><div class="window-bar"><span>love_letter.exe</span><span>− &nbsp; □ &nbsp; ×</span></div><div class="chapter">01 / A LITTLE INVITATION</div>
+      <div class="pixel-box"><svg viewBox="0 0 40 32" shape-rendering="crispEdges" aria-hidden="true"><path d="M4 7h32v22H4Z" fill="#fcf1bd" stroke="#557a3d" stroke-width="2"/><path d="m5 9 15 11L35 9" fill="none" stroke="#9baa64" stroke-width="2"/><g transform="translate(16 12)"><path d="M1 0h2v1h1V0h2v1h1v3H6v1H5v1H4v1H3V6H2V5H1V4H0V1h1Z" fill="#ef9281"/></g><path d="M30 0v5m-2-3h5M5 0v4M3 2h4" stroke="#729b4d"/></svg></div>
+      <div class="invitation-tag">一份只属于你的邀请</div><h1>你愿意<br>跟我出去吗？</h1>
+      <p id="tease" class="subtitle">想和你一起，收集今天的小美好。</p>
+      <div class="btns" id="btnArea">
+        <button class="btn-yes" id="yesBtn">YES</button>
+        <button class="btn-no" id="noBtn">No</button>
+      </div>
+    </section>
+
+    <section id="step2" class="card hidden"><div class="window-bar"><span>love_letter.exe</span><span>− &nbsp; □ &nbsp; ×</span></div><div class="chapter">02 / PICK A HAPPY PLAN</div>
+      <div class="pixel-box"><svg viewBox="0 0 40 32" shape-rendering="crispEdges" aria-hidden="true"><path d="M8 11h24v17H8Z" fill="#f1d394" stroke="#567c40" stroke-width="2"/><path d="M13 11V6h14v5M8 17h24M15 12v15m10-15v15" fill="none" stroke="#567c40" stroke-width="2"/><path d="M5 10h30v5H5Z" fill="#fff9de"/></svg></div>
+      <h1>你想一起做什么？</h1>
+      <p class="subtitle">选一个你想和我一起做的</p>
+      <div class="options" id="options">
+        <div class="option" data-value="吃饭约会"><span class="icon">🍽️</span>吃饭约会</div>
+        <div class="option" data-value="看电影"><span class="icon">🎬</span>看电影</div>
+        <div class="option" data-value="咖啡聊天"><span class="icon">☕</span>咖啡聊天</div>
+        <div class="option" data-value="野餐"><span class="icon">🧺</span>野餐</div>
+        <div class="option" data-value="爬山"><span class="icon">🥾</span>爬山</div>
+        <div class="option" data-value="给你决定"><span class="icon">🎁</span>给你决定</div>
+      </div>
+      <button class="btn-yes" id="confirmActivity" disabled style="opacity:.5">就决定是这个了 🎁</button>
+    </section>
+
+    <section id="step3" class="card hidden"><div class="window-bar"><span>love_letter.exe</span><span>− &nbsp; □ &nbsp; ×</span></div><div class="chapter">03 / SAVE A LITTLE DAY</div>
+      <div class="pixel-box"><svg viewBox="0 0 40 32" shape-rendering="crispEdges" aria-hidden="true"><path d="M8 5h24v24H8Z" fill="#fffbed" stroke="#567c40" stroke-width="2"/><path d="M8 6h24v7H8Z" fill="#8cb766"/><path d="M14 2v7m12-7v7" stroke="#567c40" stroke-width="2"/><path d="M14 17h4v4h-4m9-4h4v4h-4m-9 3h4v4h-4" fill="#dd987c"/></svg></div>
+      <h1>挑一天约会吧</h1>
+      <p class="subtitle">选一天，留给我们小小的约会</p>
+      <input class="date-input" id="dateInput" type="date" />
+      <button class="btn-yes" id="dateBtn">继续 →</button>
+    </section>
+
+    <section id="step4" class="card hidden"><div class="window-bar"><span>love_letter.exe</span><span>− &nbsp; □ &nbsp; ×</span></div><div class="chapter">04 / A NOTE FOR YOU</div>
+      <div class="letter">
+        <div class="letter-title">💌 情书.txt <span>✕</span></div>
+        <div class="letter-body">不管怎样，你都真的很可爱。
+不要让任何人告诉你不是，好吗？
+有你在，每个平凡的日子都变得特别。
+今天，以及每一天，我都想庆祝有你、有我们。</div>
+        <div class="letter-sign">
+          爱你，<br>
+          <input id="signInput" type="text" value="你的他" maxlength="8" /> ❤
+        </div>
+      </div>
+      <button class="btn-yes" id="sendBtn">就这样约了！💌</button>
+    </section>
+
+    <section id="step5" class="card hidden"><div class="window-bar"><span>love_letter.exe</span><span>− &nbsp; □ &nbsp; ×</span></div><div class="chapter">05 / IT’S A DATE!</div>
+      <div class="pixel-box"><svg viewBox="0 0 32 32" shape-rendering="crispEdges" aria-hidden="true"><path d="M8 2h16v4h4v4h3v14h-4v4h-4v3H8v-4H4v-4H1V9h4V5h3Z" fill="#8cbc5d"/><path d="m8 15 5 5 11-11" fill="none" stroke="#fffbe5" stroke-width="3"/></svg></div>
+      <div class="success" id="successText"></div>
+      <p class="muted">再玩一次？刷新页面即可 💕</p>
+    </section>
+  </main><div class="garden-caption" aria-hidden="true">PLAYER 01 + PLAYER 02<br><span>和你一起，普通的一天也闪闪发光。</span></div>
+
+  <script>
+    /* ---------- hearts bg ---------- */
+    const heartsBox = document.getElementById('hearts');
+    function spawnHeart() {
+      const h = document.createElement('div');
+      h.className = 'heart';
+      h.textContent = Math.random() > 0.5 ? '❤' : '💕';
+      h.style.left = Math.random() * 100 + 'vw';
+      h.style.fontSize = (14 + Math.random() * 18) + 'px';
+      h.style.animationDuration = (5 + Math.random() * 5) + 's';
+      heartsBox.appendChild(h);
+      setTimeout(() => h.remove(), 11000);
+    }
+    setInterval(spawnHeart, 450);
+    for (let i = 0; i < 12; i++) spawnHeart();
+
+    /* ---------- confetti ---------- */
+    function burst(x, y, char) {
+      for (let i = 0; i < 16; i++) {
+        const el = document.createElement('div');
+        el.className = 'confetti';
+        el.textContent = char || (Math.random() > 0.5 ? '❤' : '✨');
+        const rect = document.body.getBoundingClientRect();
+        el.style.left = (x || rect.width / 2) + 'px';
+        el.style.top = (y || rect.height / 2) + 'px';
+        const dx = (Math.random() - 0.5) * 200;
+        el.style.setProperty('--tx', dx + 'px');
+        el.style.transform = `translate(${dx}px, ${(Math.random()-0.5)*80}px)`;
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 1200);
+      }
+    }
+
+    /* ---------- step 1: dodge No ---------- */
+    const noBtn = document.getElementById('noBtn');
+    const yesBtn = document.getElementById('yesBtn');
+    const tease = document.getElementById('tease');
+    const btnArea = document.getElementById('btnArea');
+    const teases = [
+      "你确定吗？", "再想想嘛～", "No 键好像坏了耶", "你只能选 YES 哦", "不要拒绝我嘛", "还是选好啦！", "我不管，YES！", "真的没有别的选项啦"
+    ];
+    let noAttempts = 0;
+    let noLocked = false;
+
+    function moveNo() {
+      if (noLocked) return;
+      noAttempts++;
+      tease.textContent = teases[Math.min(noAttempts, teases.length - 1)];
+      const area = btnArea.getBoundingClientRect();
+      const no = noBtn.getBoundingClientRect();
+      const yes = yesBtn.getBoundingClientRect();
+      const maxW = area.width - 70;
+      const maxH = area.height - 40;
+      let x, y, ok = false, tries = 0;
+      while (!ok && tries < 30) {
+        x = Math.random() * maxW;
+        y = Math.random() * maxH;
+        const nx = area.left + x, ny = area.top + y;
+        const overlapYes = !(nx + 50 < yes.left || nx > yes.right - 20 || ny + 30 < yes.top || ny > yes.bottom - 20);
+        if (!overlapYes) ok = true;
+        tries++;
+      }
+      noBtn.style.position = 'absolute';
+      noBtn.style.left = x + 'px';
+      noBtn.style.top = y + 'px';
+      const scale = Math.max(0.45, 1 - noAttempts * 0.09);
+      noBtn.style.transform = `scale(${scale})`;
+      yesBtn.style.transform = `scale(${1 + Math.min(noAttempts * 0.08, 0.5)})`;
+      if (navigator.vibrate) navigator.vibrate(30);
+      noBtn.classList.remove('shaker'); void noBtn.offsetWidth; noBtn.classList.add('shaker');
+    }
+    noBtn.addEventListener('pointerenter', moveNo);
+    noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); moveNo(); }, { passive: false });
+    noBtn.addEventListener('click', (e) => { e.preventDefault(); moveNo(); });
+
+    yesBtn.addEventListener('click', () => {
+      noLocked = true;
+      const rect = yesBtn.getBoundingClientRect();
+      burst(rect.left + rect.width / 2, rect.top);
+      goTo('step2');
+    });
+
+    /* ---------- step 2: activity ---------- */
+    let selectedActivity = '';
+    const options = document.querySelectorAll('.option');
+    const confirmActivity = document.getElementById('confirmActivity');
+    options.forEach(opt => {
+      opt.addEventListener('click', () => {
+        options.forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        selectedActivity = opt.dataset.value;
+        confirmActivity.disabled = false;
+        confirmActivity.style.opacity = '1';
+      });
+    });
+    confirmActivity.addEventListener('click', () => {
+      if (!selectedActivity) return;
+      goTo('step3');
+    });
+
+    /* ---------- step 3: date ---------- */
+    const dateInput = document.getElementById('dateInput');
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    dateInput.value = tomorrow.toISOString().slice(0, 10);
+    dateInput.min = today.toISOString().slice(0, 10);
+    document.getElementById('dateBtn').addEventListener('click', () => {
+      if (!dateInput.value) { dateInput.classList.add('shaker'); setTimeout(()=>dateInput.classList.remove('shaker'),400); return; }
+      goTo('step4');
+    });
+
+    /* ---------- step 4: letter ---------- */
+    const sendBtn = document.getElementById('sendBtn');
+    sendBtn.addEventListener('click', () => {
+      const sign = document.getElementById('signInput').value || '你的他';
+      const date = dateInput.value;
+      const text = `已经约好：<strong>${selectedActivity}</strong><br>时间：<strong>${date}</strong><br><br>「情书」已由 <strong>${sign}</strong> 送出 💌<br>已锁定，不许反悔哦！`;
+      document.getElementById('successText').innerHTML = text;
+      const rect = sendBtn.getBoundingClientRect();
+      burst(rect.left + rect.width / 2, rect.top);
+      goTo('step5');
+    });
+
+    /* ---------- navigation ---------- */
+    function goTo(id) {
+      document.querySelectorAll('.card').forEach(c => c.classList.add('hidden'));
+      const next = document.getElementById(id);
+      next.classList.remove('hidden');
+      next.classList.remove('fade'); void next.offsetWidth; next.classList.add('fade');
+    }
+  </script>
+</body>
+</html>
